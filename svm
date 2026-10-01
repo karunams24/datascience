@@ -1,0 +1,35 @@
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score,classification_report
+texts=[
+    "Red is a bright color",
+    "The sky is clear blue",
+    "Grass is soft green",
+    "The sun shines yellow",
+    "Night is dark black",
+
+    "Buses are heavy vechile",
+    "Trains ride on an long tracks",
+    "Bicycles moves when you pedal",
+    "Boat flows on the top of water",
+    "Airplanes fly high on the sky"
+]
+labels=["colors","colors","colors","colors","colors",
+       "vehicles","vehicles","vehicles","vehicles","fly"]
+vectorizer=TfidfVectorizer()
+X=vectorizer.fit_transform(texts)
+y=labels
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.25,random_state=42)
+
+model=SVC(kernel="linear")
+model.fit(X_train,y_train)
+y_pred=model.predict(X_test)
+accuracy=accuracy_score(y_test,y_pred)
+new_text=["Airplanes fly high on the sky"]
+new_text_vector=vectorizer.transform(new_text)
+prediction=model.predict(new_text_vector)
+print("NewText:",new_text[0])
+print("Predicted class:",prediction[0])
