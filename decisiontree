@@ -1,0 +1,54 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+
+# Load your dataset
+df = pd.read_csv("tree.csv")
+
+print(df)
+
+le_temperature = LabelEncoder()
+le_humidity = LabelEncoder()
+le_wind = LabelEncoder()
+le_play = LabelEncoder()
+
+df["temperature"] = le_temperature.fit_transform(df["temperature"])
+df["humidity"] = le_humidity.fit_transform(df["humidity"])
+df["wind"] = le_wind.fit_transform(df["wind"])
+df["play"] = le_play.fit_transform(df["play"])
+
+X = df[["temperature", "humidity", "wind"]]
+y = df["play"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+model = DecisionTreeClassifier(
+    criterion="entropy",
+    max_depth=3,
+    random_state=42
+)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Accuracy of Decision Tree Classifier: {accuracy:.2f}")
+plt.figure(figsize=(15, 10))
+
+plot_tree(
+    model,
+    feature_names=["temperature", "humidity", "wind"],
+    class_names=list(le_play.classes_),
+    filled=True,
+    rounded=True
+)
+
+plt.show()
